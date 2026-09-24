@@ -33,14 +33,14 @@ export const STORAGE_VALIDATION_SCHEMA = Joi.object({
     S3_ACCESS_KEY_ID: Joi.string()
         .when(Joi.ref("STORAGE_DRIVER"), {
             is: "s3",
-            then: Joi.required(),
+            then: Joi.optional(),
         })
         .description("The access key ID for the S3 bucket")
         .meta({ group: "storage", order: 50 }),
     S3_SECRET_ACCESS_KEY: Joi.string()
         .when(Joi.ref("STORAGE_DRIVER"), {
             is: "s3",
-            then: Joi.required(),
+            then: Joi.optional(),
         })
         .description("The secret access key for the S3 bucket")
         .meta({ group: "storage", order: 60 }),

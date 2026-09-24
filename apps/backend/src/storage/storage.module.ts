@@ -27,6 +27,17 @@ export class StorageModule {
                     useFactory: (cfg: ConfigService): FileStorage => {
                         const driver = cfg.get<Driver>("STORAGE_DRIVER");
                         if (driver === "s3") {
+                            const accessKeyId = cfg
+                                .get<string>("S3_ACCESS_KEY_ID")
+                                ?.trim();
+                            const secretAccessKey = cfg
+                                .get<string>("S3_SECRET_ACCESS_KEY")
+                                ?.trim();
+                            const credentials =
+                                accessKeyId && secretAccessKey
+                                    ? { accessKeyId, secretAccessKey }
+                                    : undefined;
+
                             return new S3FileStorage(
                                 new S3Client({
                                     region: cfg.get<string>("S3_REGION"),
@@ -34,15 +45,7 @@ export class StorageModule {
                                     forcePathStyle: cfg.get<boolean>(
                                         "S3_FORCE_PATH_STYLE",
                                     ),
-                                    credentials: {
-                                        accessKeyId:
-                                            cfg.get<string>(
-                                                "S3_ACCESS_KEY_ID",
-                                            )!,
-                                        secretAccessKey: cfg.get<string>(
-                                            "S3_SECRET_ACCESS_KEY",
-                                        )!,
-                                    },
+                                    ...(credentials ? { credentials } : {}),
                                 }),
                                 cfg.get<string>("S3_BUCKET")!,
                             );
